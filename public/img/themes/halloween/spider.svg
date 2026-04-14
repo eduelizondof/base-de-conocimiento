@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="60" height="60">
+  <defs>
+    <radialGradient id="spiderBody">
+      <stop offset="0%" style="stop-color:#1a1a1a" />
+      <stop offset="100%" style="stop-color:#000000" />
+    </radialGradient>
+  </defs>
+  <!-- Araña -->
+  <g transform="translate(40, 35)">
+    <!-- Patas izquierdas -->
+    <path d="M -5,2 Q -15,0 -22,-3 Q -28,-5 -32,-2" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <path d="M -5,5 Q -15,8 -22,12 Q -28,15 -32,18" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <path d="M -4,8 Q -12,15 -18,22 Q -22,27 -25,32" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <path d="M -3,11 Q -10,20 -14,28 Q -17,34 -18,40" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    
+    <!-- Patas derechas -->
+    <path d="M 5,2 Q 15,0 22,-3 Q 28,-5 32,-2" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <path d="M 5,5 Q 15,8 22,12 Q 28,15 32,18" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <path d="M 4,8 Q 12,15 18,22 Q 22,27 25,32" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <path d="M 3,11 Q 10,20 14,28 Q 17,34 18,40" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    
+    <!-- Cuerpo (abdomen) -->
+    <ellipse cx="0" cy="8" rx="8" ry="11" fill="url(#spiderBody)" />
+    
+    <!-- Cabeza -->
+    <circle cx="0" cy="-3" r="5.5" fill="url(#spiderBody)" />
+    
+    <!-- Ojos -->
+    <circle cx="-2" cy="-4" r="1.2" fill="#ff4444" opacity="0.9" />
+    <circle cx="2" cy="-4" r="1.2" fill="#ff4444" opacity="0.9" />
+    <circle cx="-3.5" cy="-2.5" r="0.8" fill="#ff4444" opacity="0.7" />
+    <circle cx="3.5" cy="-2.5" r="0.8" fill="#ff4444" opacity="0.7" />
+  </g>
+</svg>
+

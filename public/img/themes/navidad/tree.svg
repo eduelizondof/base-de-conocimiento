@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="60" height="72">
+  <defs>
+    <linearGradient id="treeGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#228B22" />
+      <stop offset="100%" style="stop-color:#006400" />
+    </linearGradient>
+    <radialGradient id="ornamentRed">
+      <stop offset="0%" style="stop-color:#FF6347" />
+      <stop offset="100%" style="stop-color:#DC143C" />
+    </radialGradient>
+    <radialGradient id="ornamentGold">
+      <stop offset="0%" style="stop-color:#FFD700" />
+      <stop offset="100%" style="stop-color:#FFA500" />
+    </radialGradient>
+    <radialGradient id="ornamentBlue">
+      <stop offset="0%" style="stop-color:#87CEEB" />
+      <stop offset="100%" style="stop-color:#4169E1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Árbol de Navidad -->
+  <g transform="translate(50, 10)">
+    <!-- Sombra -->
+    <ellipse cx="0" cy="100" rx="25" ry="4" fill="#000" opacity="0.2" />
+    
+    <!-- Tronco -->
+    <rect x="-4" y="85" width="8" height="15" fill="#8B4513" rx="1" />
+    <rect x="-3" y="85" width="1" height="15" fill="#A0522D" />
+    
+    <!-- Base/maceta -->
+    <path d="M -8,100 L -6,106 L 6,106 L 8,100 Z" fill="#8B0000" />
+    <rect x="-6" y="106" width="12" height="2" fill="#DC143C" />
+    
+    <!-- Árbol (3 secciones) -->
+    <!-- Sección inferior -->
+    <path d="M 0,85 L -22,85 L -18,75 L -24,75 L -20,65 L -26,65 L 0,30 L 26,65 L 20,65 L 24,75 L 18,75 L 22,85 Z" 
+          fill="url(#treeGreen)" stroke="#1a5c1a" stroke-width="0.5" />
+    
+    <!-- Detalles de profundidad -->
+    <g opacity="0.3" fill="#000">
+      <path d="M 0,35 L -20,65 L -15,65" />
+      <path d="M 0,40 L -15,70 L -10,70" />
+      <path d="M 0,45 L -10,75 L -5,75" />
+    </g>
+    
+    <!-- Adornos rojos -->
+    <circle cx="-12" cy="70" r="2.5" fill="url(#ornamentRed)" />
+    <circle cx="-12" cy="70" r="1" fill="#FFF" opacity="0.6" />
+    <circle cx="15" cy="75" r="2.5" fill="url(#ornamentRed)" />
+    <circle cx="15" cy="75" r="1" fill="#FFF" opacity="0.6" />
+    
+    <!-- Adornos dorados -->
+    <circle cx="8" cy="68" r="2.5" fill="url(#ornamentGold)" />
+    <circle cx="8" cy="68" r="1" fill="#FFF" opacity="0.7" />
+    <circle cx="-18" cy="78" r="2.5" fill="url(#ornamentGold)" />
+    <circle cx="-18" cy="78" r="1" fill="#FFF" opacity="0.7" />
+    
+    <!-- Adornos azules -->
+    <circle cx="0" cy="60" r="2.5" fill="url(#ornamentBlue)" />
+    <circle cx="0" cy="60" r="1" fill="#FFF" opacity="0.6" />
+    <circle cx="-8" cy="55" r="2.5" fill="url(#ornamentBlue)" />
+    <circle cx="-8" cy="55" r="1" fill="#FFF" opacity="0.6" />
+    <circle cx="12" cy="58" r="2.5" fill="url(#ornamentBlue)" />
+    <circle cx="12" cy="58" r="1" fill="#FFF" opacity="0.6" />
+    
+    <!-- Guirnalda (línea decorativa dorada) -->
+    <path d="M -22,85 Q -15,80 -8,82 Q 0,84 8,82 Q 15,80 22,85" 
+          stroke="#FFD700" stroke-width="1.5" fill="none" opacity="0.7" />
+    <path d="M -20,72 Q -12,68 -4,70 Q 4,72 12,70 Q 18,68 20,72" 
+          stroke="#FFD700" stroke-width="1.5" fill="none" opacity="0.7" />
+    <path d="M -18,60 Q -10,56 0,58 Q 10,56 18,60" 
+          stroke="#FFD700" stroke-width="1.5" fill="none" opacity="0.7" />
+    
+    <!-- Estrella en la punta -->
+    <g transform="translate(0, 28)">
+      <!-- Sombra de la estrella -->
+      <path d="M 0,-8 L 1.5,-3 L 6.5,-2.5 L 2.5,1 L 3.5,6 L 0,3.5 L -3.5,6 L -2.5,1 L -6.5,-2.5 L -1.5,-3 Z" 
+            fill="#000" opacity="0.2" transform="translate(0.5, 0.5)" />
+      <!-- Estrella principal -->
+      <path d="M 0,-8 L 1.5,-3 L 6.5,-2.5 L 2.5,1 L 3.5,6 L 0,3.5 L -3.5,6 L -2.5,1 L -6.5,-2.5 L -1.5,-3 Z" 
+            fill="url(#ornamentGold)" stroke="#FFA500" stroke-width="0.5" />
+      <!-- Brillo de la estrella -->
+      <circle cx="0" cy="-1" r="3" fill="#FFF" opacity="0.5" />
+      <circle cx="-1" cy="-2" r="1.5" fill="#FFF" opacity="0.7" />
+    </g>
+    
+    <!-- Detalles de nieve en el árbol -->
+    <g fill="#FFF" opacity="0.8">
+      <ellipse cx="-20" cy="65" rx="3" ry="1.5" />
+      <ellipse cx="-10" cy="68" rx="2.5" ry="1.2" />
+      <ellipse cx="0" cy="70" rx="3" ry="1.5" />
+      <ellipse cx="10" cy="72" rx="2.5" ry="1.2" />
+      <ellipse cx="18" cy="75" rx="3" ry="1.5" />
+      
+      <ellipse cx="-15" cy="55" rx="2" ry="1" />
+      <ellipse cx="0" cy="50" rx="2.5" ry="1.2" />
+      <ellipse cx="12" cy="53" rx="2" ry="1" />
+    </g>
+  </g>
+</svg>
+

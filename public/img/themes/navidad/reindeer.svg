@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" width="72" height="60">
+  <defs>
+    <linearGradient id="reindeerBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513" />
+      <stop offset="100%" style="stop-color:#654321" />
+    </linearGradient>
+    <radialGradient id="nose">
+      <stop offset="0%" style="stop-color:#FF6347" />
+      <stop offset="100%" style="stop-color:#DC143C" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Reno de Navidad -->
+  <g transform="translate(60, 30)">
+    <!-- Sombra -->
+    <ellipse cx="5" cy="45" rx="30" ry="4" fill="#000" opacity="0.2" />
+    
+    <!-- Patas traseras -->
+    <g fill="url(#reindeerBody)">
+      <rect x="15" y="25" width="3" height="18" rx="1.5" />
+      <rect x="20" y="25" width="3" height="18" rx="1.5" />
+      <!-- Pezuñas traseras -->
+      <ellipse cx="16.5" cy="43" rx="2" ry="1.5" fill="#2F4F4F" />
+      <ellipse cx="21.5" cy="43" rx="2" ry="1.5" fill="#2F4F4F" />
+    </g>
+    
+    <!-- Cuerpo -->
+    <ellipse cx="10" cy="15" rx="18" ry="12" fill="url(#reindeerBody)" />
+    <ellipse cx="10" cy="12" rx="16" ry="10" fill="#A0522D" opacity="0.3" />
+    
+    <!-- Patas delanteras -->
+    <g fill="url(#reindeerBody)">
+      <rect x="-5" y="22" width="3" height="20" rx="1.5" />
+      <rect x="-10" y="22" width="3" height="20" rx="1.5" />
+      <!-- Pezuñas delanteras -->
+      <ellipse cx="-3.5" cy="42" rx="2" ry="1.5" fill="#2F4F4F" />
+      <ellipse cx="-8.5" cy="42" rx="2" ry="1.5" fill="#2F4F4F" />
+    </g>
+    
+    <!-- Cuello -->
+    <ellipse cx="-8" cy="8" rx="6" ry="10" fill="url(#reindeerBody)" transform="rotate(-20 -8 8)" />
+    
+    <!-- Cabeza -->
+    <ellipse cx="-18" cy="0" rx="7" ry="8" fill="url(#reindeerBody)" />
+    <ellipse cx="-18" cy="-2" rx="6" ry="6" fill="#A0522D" opacity="0.3" />
+    
+    <!-- Hocico -->
+    <ellipse cx="-24" cy="2" rx="4" ry="3" fill="#8B7355" />
+    <ellipse cx="-24" cy="1" rx="3" ry="2" fill="#A0522D" />
+    
+    <!-- Nariz (Rudolph) -->
+    <circle cx="-26" cy="1" r="2" fill="url(#nose)" />
+    <circle cx="-25.5" cy="0.5" r="0.8" fill="#FFF" opacity="0.6" />
+    
+    <!-- Ojo -->
+    <circle cx="-20" cy="-2" r="1.8" fill="#000" />
+    <circle cx="-19.5" cy="-2.5" r="0.6" fill="#FFF" />
+    
+    <!-- Orejas -->
+    <ellipse cx="-14" cy="-6" rx="2" ry="4" fill="url(#reindeerBody)" transform="rotate(30 -14 -6)" />
+    <ellipse cx="-14" cy="-6" rx="1" ry="3" fill="#A0522D" transform="rotate(30 -14 -6)" />
+    <ellipse cx="-22" cy="-6" rx="2" ry="4" fill="url(#reindeerBody)" transform="rotate(-30 -22 -6)" />
+    <ellipse cx="-22" cy="-6" rx="1" ry="3" fill="#A0522D" transform="rotate(-30 -22 -6)" />
+    
+    <!-- Astas (cuernos) -->
+    <g stroke="#654321" stroke-width="2" fill="none" stroke-linecap="round">
+      <!-- Asta izquierda -->
+      <path d="M -16,-7 L -14,-12 L -12,-16" />
+      <path d="M -14,-12 L -11,-13" />
+      <path d="M -14,-12 L -15,-15" />
+      <path d="M -12,-16 L -9,-17" />
+      <path d="M -12,-16 L -13,-19" />
+      
+      <!-- Asta derecha -->
+      <path d="M -20,-7 L -22,-12 L -24,-16" />
+      <path d="M -22,-12 L -25,-13" />
+      <path d="M -22,-12 L -21,-15" />
+      <path d="M -24,-16 L -27,-17" />
+      <path d="M -24,-16 L -23,-19" />
+    </g>
+    
+    <!-- Cola -->
+    <path d="M 26,12 Q 30,10 32,12 Q 34,14 32,16 Q 30,17 28,16" 
+          fill="url(#reindeerBody)" stroke="#654321" stroke-width="0.5" />
+    
+    <!-- Collar navideño con cascabel -->
+    <g>
+      <!-- Collar -->
+      <ellipse cx="-8" cy="10" rx="8" ry="2" fill="#DC143C" />
+      <ellipse cx="-8" cy="9" rx="8" ry="1.5" fill="#FF6347" opacity="0.6" />
+      
+      <!-- Cascabel -->
+      <circle cx="-8" cy="13" r="2" fill="#FFD700" />
+      <circle cx="-8" cy="13" r="1.5" fill="#FFA500" />
+      <circle cx="-8" cy="13.5" r="0.5" fill="#000" />
+      <path d="M -8,11 L -7,10 L -9,10 Z" fill="#FFD700" />
+    </g>
+    
+    <!-- Detalles de brillo en el cuerpo -->
+    <g fill="#FFF" opacity="0.2">
+      <ellipse cx="0" cy="10" rx="8" ry="4" />
+      <ellipse cx="-18" cy="-3" rx="3" ry="2" />
+    </g>
+  </g>
+</svg>
+

@@ -389,7 +389,7 @@ new class extends Component
 
     @if ($showCreateModal)
         <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm" wire:click="closeCreateModal"></div>
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" wire:click="closeCreateModal">
             <div wire:click.stop class="flex h-[92vh] w-[96vw] max-w-7xl flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-xl sm:p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold">{{ $editingDocumentId ? 'Editar documento' : 'Cargar documento' }}</h3>
@@ -472,7 +472,7 @@ new class extends Component
 
     @if ($showDetailModal && $selectedDocument)
         <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm" wire:click="closeDetail"></div>
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" wire:click="closeDetail">
             <div wire:click.stop class="flex h-[92vh] w-[96vw] max-w-7xl flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-xl sm:p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold">{{ $selectedDocument->name }}</h3>

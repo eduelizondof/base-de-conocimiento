@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="60" height="60">
+  <defs>
+    <linearGradient id="giftBox" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#DC143C" />
+      <stop offset="100%" style="stop-color:#8B0000" />
+    </linearGradient>
+    <linearGradient id="ribbon" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFD700" />
+      <stop offset="50%" style="stop-color:#FFA500" />
+      <stop offset="100%" style="stop-color:#FFD700" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Regalo de Navidad -->
+  <g transform="translate(50, 50)">
+    <!-- Sombra -->
+    <ellipse cx="0" cy="28" rx="22" ry="4" fill="#000" opacity="0.2" />
+    
+    <!-- Caja del regalo -->
+    <rect x="-20" y="-10" width="40" height="35" fill="url(#giftBox)" rx="2" />
+    
+    <!-- Detalles de sombra en la caja -->
+    <rect x="-20" y="-10" width="40" height="3" fill="#000" opacity="0.2" />
+    <rect x="-20" y="22" width="40" height="3" fill="#000" opacity="0.15" />
+    
+    <!-- Listón vertical -->
+    <rect x="-3" y="-10" width="6" height="35" fill="url(#ribbon)" />
+    <rect x="-2.5" y="-10" width="1" height="35" fill="#FFF" opacity="0.4" />
+    <rect x="1.5" y="-10" width="1" height="35" fill="#000" opacity="0.2" />
+    
+    <!-- Listón horizontal -->
+    <rect x="-20" y="5" width="40" height="6" fill="url(#ribbon)" />
+    <rect x="-20" y="5.5" width="40" height="1" fill="#FFF" opacity="0.4" />
+    <rect x="-20" y="10" width="40" height="1" fill="#000" opacity="0.2" />
+    
+    <!-- Moño/lazo en la parte superior -->
+    <g transform="translate(0, -10)">
+      <!-- Centro del moño -->
+      <rect x="-3" y="-2" width="6" height="4" fill="url(#ribbon)" rx="1" />
+      <rect x="-2.5" y="-1.5" width="1" height="3" fill="#FFF" opacity="0.4" />
+      
+      <!-- Lazo izquierdo -->
+      <ellipse cx="-8" cy="0" rx="6" ry="4" fill="url(#ribbon)" transform="rotate(-20 -8 0)" />
+      <ellipse cx="-8" cy="0" rx="5" ry="3" fill="#FFA500" opacity="0.5" transform="rotate(-20 -8 0)" />
+      <path d="M -8,0 Q -5,-2 -3,-1" stroke="#000" stroke-width="0.5" fill="none" opacity="0.3" />
+      
+      <!-- Lazo derecho -->
+      <ellipse cx="8" cy="0" rx="6" ry="4" fill="url(#ribbon)" transform="rotate(20 8 0)" />
+      <ellipse cx="8" cy="0" rx="5" ry="3" fill="#FFA500" opacity="0.5" transform="rotate(20 8 0)" />
+      <path d="M 8,0 Q 5,-2 3,-1" stroke="#000" stroke-width="0.5" fill="none" opacity="0.3" />
+      
+      <!-- Cintas colgantes -->
+      <path d="M -3,2 L -5,10 L -3,9 L -5,8 L -4,12" fill="url(#ribbon)" stroke="#000" stroke-width="0.3" opacity="0.8" />
+      <path d="M 3,2 L 5,10 L 3,9 L 5,8 L 4,12" fill="url(#ribbon)" stroke="#000" stroke-width="0.3" opacity="0.8" />
+    </g>
+    
+    <!-- Detalles de brillo en la caja -->
+    <g opacity="0.3">
+      <rect x="-18" y="-8" width="2" height="10" fill="#FFF" />
+      <rect x="-16" y="-8" width="1" height="15" fill="#FFF" />
+    </g>
+    
+    <!-- Etiqueta de regalo -->
+    <g transform="translate(12, 18)">
+      <rect x="-3" y="-2" width="6" height="4" fill="#FFF" rx="0.5" />
+      <line x1="-2" y1="-0.5" x2="2" y2="-0.5" stroke="#8B0000" stroke-width="0.3" />
+      <line x1="-2" y1="0.5" x2="2" y2="0.5" stroke="#8B0000" stroke-width="0.3" />
+    </g>
+  </g>
+</svg>
+
