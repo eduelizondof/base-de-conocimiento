@@ -18,6 +18,14 @@ new class extends Component
 
     public ?Document $selectedDocument = null;
 
+    public ?int $editingDocumentId = null;
+
+    public bool $showNotification = false;
+
+    public string $notificationType = 'success';
+
+    public string $notificationMessage = '';
+
     public string $name = '';
 
     public string $path = '';
@@ -33,9 +41,16 @@ new class extends Component
         $this->resetPage();
     }
 
+    public function clearSearch(): void
+    {
+        $this->q = '';
+        $this->resetPage();
+    }
+
     public function openCreateModal(): void
     {
         $this->resetForm();
+        $this->editingDocumentId = null;
         $this->showCreateModal = true;
     }
 
@@ -66,11 +81,42 @@ new class extends Component
             'keywords' => ['required', 'string', 'max:255'],
         ]);
 
-        Document::create($validated);
+        $validated['content'] = strip_tags(
+            $validated['content'],
+            '<b><strong><i><em><u><ul><ol><li><p><br>'
+        );
 
-        $this->resetForm();
-        $this->showCreateModal = false;
-        $this->resetPage();
+        try {
+            if ($this->editingDocumentId !== null) {
+                $document = Document::query()->findOrFail($this->editingDocumentId);
+                $document->update($validated);
+                $this->notify('success', 'Documento actualizado correctamente.');
+            } else {
+                Document::create($validated);
+                $this->notify('success', 'Documento creado correctamente.');
+            }
+
+            $this->resetForm();
+            $this->showCreateModal = false;
+            $this->editingDocumentId = null;
+            $this->resetPage();
+        } catch (\Throwable) {
+            $this->notify('error', 'Ocurrió un error al guardar el documento.');
+        }
+    }
+
+    public function openEditModal(int $documentId): void
+    {
+        $document = Document::query()->findOrFail($documentId);
+
+        $this->editingDocumentId = $document->id;
+        $this->name = $document->name;
+        $this->path = $document->path;
+        $this->description = $document->description;
+        $this->content = $document->content;
+        $this->keywords = $document->keywords;
+        $this->resetValidation();
+        $this->showCreateModal = true;
     }
 
     public function showDetail(int $documentId): void
@@ -103,10 +149,35 @@ new class extends Component
         $this->reset(['name', 'path', 'description', 'content', 'keywords']);
         $this->resetValidation();
     }
+
+    public function notify(string $type, string $message): void
+    {
+        $this->notificationType = $type;
+        $this->notificationMessage = $message;
+        $this->showNotification = true;
+    }
+
+    public function clearNotification(): void
+    {
+        $this->showNotification = false;
+    }
 };
 ?>
 
 <div class="min-h-screen bg-slate-100 text-slate-900">
+    @if ($showNotification)
+        <div
+            x-data
+            x-init="setTimeout(() => $wire.clearNotification(), 3000)"
+            class="fixed right-4 top-4 z-60 rounded-2xl px-4 py-3 text-sm font-medium shadow-lg {{ $notificationType === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white' }}"
+        >
+            <div class="flex items-center gap-3">
+                <span>{{ $notificationMessage }}</span>
+                <button type="button" wire:click="clearNotification" class="rounded-full bg-white/15 px-2 py-0.5 text-xs hover:bg-white/25">Cerrar</button>
+            </div>
+        </div>
+    @endif
+
     <div class="mx-auto flex w-full max-w-6xl flex-col px-4 pb-12 pt-4 sm:px-6 lg:px-8">
         <header class="mb-6 flex items-center justify-between py-2">
             <div>
@@ -133,16 +204,39 @@ new class extends Component
                     <input
                         id="search"
                         type="text"
-                        wire:model.live.debounce.300ms="q"
+                        wire:model.live.debounce.500ms="q"
                         placeholder="Busca por nombre, descripción, contenido o keywords..."
                         class="w-full border-0 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none sm:text-base"
                     >
+
+                    @if (trim($q) !== '')
+                        <button
+                            type="button"
+                            wire:click="clearSearch"
+                            class="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100"
+                        >
+                            Limpiar
+                        </button>
+                    @endif
                 </div>
             </div>
         </section>
 
         <section>
-            <div wire:loading class="mb-4 text-sm text-slate-500">Buscando...</div>
+            @if (trim($q) !== '')
+                <div class="mb-3 flex items-center justify-between gap-3 rounded-xl bg-sky-50 px-3 py-2 text-sm text-sky-800">
+                    <p>
+                        Filtrando resultados por: <span class="font-semibold">"{{ $q }}"</span>
+                    </p>
+                    <span class="text-xs text-sky-700">
+                        {{ $this->documents->total() }} resultado(s)
+                    </span>
+                </div>
+            @endif
+
+            <div wire:loading wire:target="q" class="mb-4 text-sm text-slate-500">
+                Aplicando filtro...
+            </div>
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 @forelse ($this->documents as $document)
@@ -153,7 +247,9 @@ new class extends Component
                         </div>
 
                         <p class="mb-3 line-clamp-3 text-sm text-slate-600">{{ $document->description }}</p>
-                        <p class="mb-4 line-clamp-3 text-sm text-slate-500">{{ $document->content }}</p>
+                        <p class="mb-4 line-clamp-3 text-sm text-slate-500">
+                            {{ Str::limit(strip_tags($document->content), 220) }}
+                        </p>
 
                         <div class="mb-4 flex flex-wrap gap-2">
                             @foreach (collect(explode(',', $document->keywords))->filter() as $keyword)
@@ -164,13 +260,22 @@ new class extends Component
                         </div>
 
                         <div class="flex items-center justify-between gap-3">
-                            <button
-                                type="button"
-                                wire:click="showDetail({{ $document->id }})"
-                                class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
-                            >
-                                Ver detalle
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    wire:click="showDetail({{ $document->id }})"
+                                    class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                                >
+                                    Ver detalle
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="openEditModal({{ $document->id }})"
+                                    class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                                >
+                                    Editar
+                                </button>
+                            </div>
 
                             <a
                                 href="{{ $document->path }}"
@@ -196,16 +301,17 @@ new class extends Component
     </div>
 
     @if ($showCreateModal)
-        <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm"></div>
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div class="w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 shadow-xl sm:p-6">
+        <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm" wire:click="closeCreateModal"></div>
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+            <div wire:click.stop class="flex h-[92vh] w-[96vw] max-w-7xl flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-xl sm:p-6">
                 <div class="mb-4 flex items-center justify-between">
-                    <h3 class="text-lg font-semibold">Cargar documento</h3>
+                    <h3 class="text-lg font-semibold">{{ $editingDocumentId ? 'Editar documento' : 'Cargar documento' }}</h3>
                     <button type="button" wire:click="closeCreateModal" class="rounded-full p-2 text-slate-500 hover:bg-slate-100">✕</button>
                 </div>
 
-                <form wire:submit="save" class="grid grid-cols-1 gap-4">
-                    <div>
+                <form wire:submit="save" class="flex h-full flex-col overflow-hidden">
+                    <div class="grid flex-1 grid-cols-1 gap-4 overflow-y-auto pr-1">
+                        <div>
                         <label for="name" class="mb-1 block text-sm font-medium">Nombre</label>
                         <input id="name" type="text" wire:model="name" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none">
                         @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
@@ -223,9 +329,36 @@ new class extends Component
                         @error('description') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
 
-                    <div>
+                        <div>
                         <label for="content" class="mb-1 block text-sm font-medium">Contenido clave</label>
-                        <textarea id="content" wire:model="content" rows="5" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"></textarea>
+                        <div
+                            x-data="{
+                                value: $wire.entangle('content'),
+                                syncEditorFromState() {
+                                    if (document.activeElement !== this.$refs.editor) {
+                                        this.$refs.editor.innerHTML = this.value ?? '';
+                                    }
+                                }
+                            }"
+                            x-init="$nextTick(() => { $refs.editor.innerHTML = value ?? '' }); $watch('value', () => syncEditorFromState())"
+                            class="overflow-hidden rounded-xl border border-slate-300"
+                        >
+                            <div class="flex flex-wrap items-center gap-2 border-b border-slate-200 bg-slate-50 p-2">
+                                <button type="button" class="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs hover:bg-slate-100" x-on:click="$refs.editor.focus(); document.execCommand('bold')">B</button>
+                                <button type="button" class="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs italic hover:bg-slate-100" x-on:click="$refs.editor.focus(); document.execCommand('italic')">I</button>
+                                <button type="button" class="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs underline hover:bg-slate-100" x-on:click="$refs.editor.focus(); document.execCommand('underline')">U</button>
+                                <button type="button" class="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs hover:bg-slate-100" x-on:click="$refs.editor.focus(); document.execCommand('insertUnorderedList')">Lista</button>
+                                <button type="button" class="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs hover:bg-slate-100" x-on:click="$refs.editor.focus(); document.execCommand('insertOrderedList')">1. 2. 3.</button>
+                            </div>
+                            <div
+                                x-ref="editor"
+                                contenteditable="true"
+                                x-on:input="value = $refs.editor.innerHTML"
+                                dir="ltr"
+                                style="direction: ltr; unicode-bidi: isolate;"
+                                class="min-h-[280px] w-full overflow-y-auto px-3 py-2 text-left text-sm focus:outline-none"
+                            ></div>
+                        </div>
                         @error('content') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
 
@@ -235,12 +368,14 @@ new class extends Component
                         @error('keywords') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="mt-2 flex items-center justify-end gap-3">
+                    </div>
+
+                    <div class="mt-4 flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
                         <button type="button" wire:click="closeCreateModal" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">
                             Cancelar
                         </button>
                         <button type="submit" class="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
-                            Guardar documento
+                            {{ $editingDocumentId ? 'Actualizar documento' : 'Guardar documento' }}
                         </button>
                     </div>
                 </form>
@@ -249,15 +384,15 @@ new class extends Component
     @endif
 
     @if ($showDetailModal && $selectedDocument)
-        <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm"></div>
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div class="w-full max-w-3xl rounded-3xl border border-slate-200 bg-white p-5 shadow-xl sm:p-6">
+        <div class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm" wire:click="closeDetail"></div>
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+            <div wire:click.stop class="flex h-[92vh] w-[96vw] max-w-7xl flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-xl sm:p-6">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold">{{ $selectedDocument->name }}</h3>
                     <button type="button" wire:click="closeDetail" class="rounded-full p-2 text-slate-500 hover:bg-slate-100">✕</button>
                 </div>
 
-                <div class="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
+                <div class="flex-1 space-y-4 overflow-y-auto pr-1">
                     <div>
                         <p class="mb-1 text-sm font-medium text-slate-700">Descripción</p>
                         <p class="text-sm text-slate-600">{{ $selectedDocument->description }}</p>
@@ -265,12 +400,25 @@ new class extends Component
 
                     <div>
                         <p class="mb-1 text-sm font-medium text-slate-700">Contenido</p>
-                        <p class="whitespace-pre-wrap text-sm text-slate-600">{{ $selectedDocument->content }}</p>
+                        <div class="prose prose-sm max-w-none text-slate-600">
+                            {!! $selectedDocument->content !!}
+                        </div>
                     </div>
 
                     <div>
                         <p class="mb-1 text-sm font-medium text-slate-700">Ruta</p>
                         <p class="break-all text-xs text-slate-500">{{ $selectedDocument->path }}</p>
+                    </div>
+
+                    <div>
+                        <p class="mb-2 text-sm font-medium text-slate-700">Palabras clave</p>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach (collect(explode(',', $selectedDocument->keywords))->filter() as $keyword)
+                                <span wire:key="detail-keyword-{{ $selectedDocument->id }}-{{ md5($keyword) }}" class="rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700">
+                                    {{ trim($keyword) }}
+                                </span>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
