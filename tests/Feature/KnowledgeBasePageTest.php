@@ -18,6 +18,7 @@ test('knowledge base page loads and shows stored documents', function () {
 
     $response
         ->assertOk()
-        ->assertSee('Base de conocimiento')
+        ->assertSee('Base de Conocimiento - SEJ ISO', escape: false)
+        ->assertSee('Base de Conocimiento')
         ->assertSee('Informe de auditoria');
 });

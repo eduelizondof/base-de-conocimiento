@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\Document;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -241,15 +241,36 @@ new class extends Component
     {
         $this->showNotification = false;
     }
+
+    public function render()
+    {
+        return $this->view()->layout('layouts::app', [
+            'metaDescription' => 'Consulta y gestión de documentos institucionales de la Secretaría de Educación Jalisco (SEJ). Búsqueda por nombre, descripción, contenido y palabras clave alineada a procesos ISO.',
+            'metaKeywords' => 'base de conocimiento, SEJ, Secretaría de Educación Jalisco, educación, ISO, documentos, procedimientos, Jalisco',
+        ])->title('Base de Conocimiento - SEJ ISO');
+    }
 };
 ?>
 
 <div class="min-h-screen bg-slate-100 text-slate-900">
+    <header class="flex h-11 shrink-0 items-center justify-center bg-[#e9004c] px-4 shadow-sm">
+        <a href="{{ url('/') }}" class="flex items-center py-1.5" wire:navigate>
+            <img
+                src="{{ asset('img/logo_blanco_educacion.svg') }}"
+                alt="Secretaría de Educación Jalisco"
+                width="200"
+                height="51"
+                class="h-7 w-auto max-w-[min(100vw-2rem,220px)] object-contain object-center"
+                fetchpriority="high"
+            >
+        </a>
+    </header>
+
     @if ($showNotification)
         <div
             x-data
             x-init="setTimeout(() => $wire.clearNotification(), 3000)"
-            class="fixed right-4 top-4 z-60 rounded-2xl px-4 py-3 text-sm font-medium shadow-lg {{ $notificationType === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white' }}"
+            class="fixed right-4 top-14 z-60 rounded-2xl px-4 py-3 text-sm font-medium shadow-lg {{ $notificationType === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white' }}"
         >
             <div class="flex items-center gap-3">
                 <span>{{ $notificationMessage }}</span>
@@ -258,21 +279,23 @@ new class extends Component
         </div>
     @endif
 
-    <div class="mx-auto flex w-full max-w-6xl flex-col px-4 pb-12 pt-4 sm:px-6 lg:px-8">
-        <header class="mb-6 flex items-center justify-between py-2">
+    <div class="mx-auto flex w-full max-w-6xl flex-col px-4 pb-12 pt-6 sm:px-6 lg:px-8">
+        <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <p class="text-sm text-slate-500">Local</p>
-                <h1 class="text-xl font-semibold sm:text-2xl">Base de conocimiento</h1>
+                <h1 class="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">Base de Conocimiento — SEJ ISO</h1>
+                <p class="mt-1 max-w-2xl text-sm text-slate-600">
+                    Consulta, busca y administra documentos y enlaces de referencia para procesos y normativa institucional.
+                </p>
             </div>
 
             <button
                 type="button"
                 wire:click="openCreateModal"
-                class="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-700 focus:outline-none"
+                class="shrink-0 rounded-full bg-[#ff8300] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#e67600] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8300]/45 focus-visible:ring-offset-2"
             >
                 Nuevo documento
             </button>
-        </header>
+        </div>
 
         <section class="mb-8 mt-4 flex flex-1 items-center justify-center">
             <div class="w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-3 shadow-lg">
@@ -368,7 +391,7 @@ new class extends Component
                                 href="{{ $document->path }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+                                class="rounded-full bg-[#ff8300] px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#e67600] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8300]/45 focus-visible:ring-offset-2"
                             >
                                 Abrir enlace
                             </a>
@@ -461,7 +484,7 @@ new class extends Component
                         <button type="button" wire:click="closeCreateModal" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">
                             Cancelar
                         </button>
-                        <button type="submit" class="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+                        <button type="submit" class="rounded-full bg-[#ff8300] px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#e67600] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8300]/45 focus-visible:ring-offset-2">
                             {{ $editingDocumentId ? 'Actualizar documento' : 'Guardar documento' }}
                         </button>
                     </div>
@@ -510,7 +533,7 @@ new class extends Component
                 </div>
 
                 <div class="mt-5 flex justify-end">
-                    <a href="{{ $selectedDocument->path }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+                    <a href="{{ $selectedDocument->path }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-[#ff8300] px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#e67600] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8300]/45 focus-visible:ring-offset-2">
                         Abrir recurso
                     </a>
                 </div>
