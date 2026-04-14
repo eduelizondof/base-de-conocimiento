@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Document;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -25,6 +26,8 @@ new class extends Component
     public string $notificationType = 'success';
 
     public string $notificationMessage = '';
+
+    public string $searchMode = 'default';
 
     public string $name = '';
 
@@ -136,12 +139,89 @@ new class extends Component
         $query = trim($this->q);
 
         if ($query === '') {
+            $this->searchMode = 'default';
+
             return Document::query()
                 ->latest()
                 ->paginate(perPage: 8);
         }
 
-        return Document::search($query)->paginate(perPage: 8);
+        $normalizedQuery = $this->normalizeSearchText($query);
+        $scoutResults = Document::search($query)->paginate(perPage: 8);
+
+        if ($scoutResults->total() > 0) {
+            $this->searchMode = 'exact';
+
+            return $scoutResults;
+        }
+
+        if ($normalizedQuery !== '' && $normalizedQuery !== mb_strtolower($query)) {
+            $normalizedScoutResults = Document::search($normalizedQuery)->paginate(perPage: 8);
+
+            if ($normalizedScoutResults->total() > 0) {
+                $this->searchMode = 'normalized';
+
+                return $normalizedScoutResults;
+            }
+        }
+
+        $terms = $this->extractSearchTerms($normalizedQuery !== '' ? $normalizedQuery : $query);
+
+        if ($terms === []) {
+            $this->searchMode = 'none';
+
+            return Document::query()->paginate(perPage: 8);
+        }
+
+        $fallbackResults = Document::query()
+            ->where(function (Builder $queryBuilder) use ($terms): void {
+                foreach ($terms as $term) {
+                    $queryBuilder->where(function (Builder $tokenQuery) use ($term): void {
+                        $this->applyTokenConstraint($tokenQuery, $term);
+                    });
+                }
+            })
+            ->latest()
+            ->paginate(perPage: 8);
+
+        $this->searchMode = 'partial';
+
+        return $fallbackResults;
+    }
+
+    private function normalizeSearchText(string $text): string
+    {
+        $normalized = Str::lower(Str::ascii($text));
+        $normalized = preg_replace('/[^\p{L}\p{N}\s]+/u', ' ', $normalized) ?? '';
+
+        return trim(preg_replace('/\s+/u', ' ', $normalized) ?? '');
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function extractSearchTerms(string $query): array
+    {
+        return collect(explode(' ', $query))
+            ->map(static fn (string $term): string => trim($term))
+            ->filter(static fn (string $term): bool => mb_strlen($term) >= 2)
+            ->values()
+            ->all();
+    }
+
+    private function applyTokenConstraint(Builder $query, string $term): void
+    {
+        $columns = ['name', 'description', 'content', 'keywords'];
+        $databaseDriver = Document::query()->getModel()->getConnection()->getDriverName();
+        $searchTerm = '%'.$term.'%';
+
+        foreach ($columns as $column) {
+            if ($databaseDriver === 'mysql') {
+                $query->orWhereRaw("LOWER({$column}) COLLATE utf8mb4_unicode_ci LIKE ?", [$searchTerm]);
+            } else {
+                $query->orWhere($column, 'like', $searchTerm);
+            }
+        }
     }
 
     private function resetForm(): void
@@ -227,6 +307,13 @@ new class extends Component
                 <div class="mb-3 flex items-center justify-between gap-3 rounded-xl bg-sky-50 px-3 py-2 text-sm text-sky-800">
                     <p>
                         Filtrando resultados por: <span class="font-semibold">"{{ $q }}"</span>
+                        @if ($searchMode === 'partial')
+                            <span class="ml-2 text-xs font-medium text-sky-700">(coincidencias parciales por palabras)</span>
+                        @elseif ($searchMode === 'normalized')
+                            <span class="ml-2 text-xs font-medium text-sky-700">(coincidencia normalizada sin acentos)</span>
+                        @elseif ($searchMode === 'exact')
+                            <span class="ml-2 text-xs font-medium text-sky-700">(coincidencia exacta Scout)</span>
+                        @endif
                     </p>
                     <span class="text-xs text-sky-700">
                         {{ $this->documents->total() }} resultado(s)
